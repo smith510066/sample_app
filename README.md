@@ -1,3 +1,2 @@
 cool stuff here!
-[*testing*] (http://www.google.com)
-[testing]
+[*testing*](http://www.google.com)
