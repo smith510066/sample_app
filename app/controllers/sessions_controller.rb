@@ -10,7 +10,8 @@ class SessionsController < ApplicationController
 		if user && user.authenticate(params[:session][:password])
 			flash[:works] = "You are now authenticated"
 			sign_in user
-			redirect_to user_path(user)
+			friendly_redirect user
+			#redirect_to user_path(user)
 			#redirect_to('/')
 		else
 			flash.now[:error] = "Wrong username and/or password combination"
