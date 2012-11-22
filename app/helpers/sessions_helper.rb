@@ -5,6 +5,15 @@ module SessionsHelper
 	self.current_user = user
 	end
 
+   def signed_in_user
+    if !signed_in?
+      store_location
+      flash[:error] = "Please sign in!"
+      redirect_to signin_url
+    end
+  end
+  
+
 	 def current_user=(user)
     @current_user = user
   end

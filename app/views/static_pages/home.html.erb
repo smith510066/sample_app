@@ -1,16 +1,87 @@
-<% provide :title, 'HOME PAGE' %>
+<% provide :title, "HOME PAGE" %>
 
-<div class="center hero-unit">
-  <h1>Welcome to the Sample App</h1>
 
-  <h2>
-    This is the home page for the
-    <a href="http://railstutorial.org/">Ruby on Rails Tutorial</a>
-    sample application.
-  </h2>
 
-  <%= link_to "Sign up now!", signup_path, :class => "btn btn-large btn-primary" %>
-</div>
 
-<%= link_to image_tag("rails.png", alt: "Rails"), 'http://rubyonrails.org/' %>
+
+<% if signed_in? %>
+  <div class="row">
+    <aside class="span4">
+      <section>
+        <a href="<%= user_path(current_user) %>">
+			  <%= gravatar_for current_user %>
+			</a>
+			<h1>
+			  <%= current_user.name %>
+			</h1>
+			<span>
+			  <%= link_to "view my profile", current_user %>
+			</span>
+			<span>
+			  <%= pluralize(current_user.microposts.count, "micropost") %>
+			</span>
+      </section>
+      <section>
+        <%= form_for(@micropost) do |f| %>
+		  <%= render 'shared/error_messages', object: f.object %>
+		  <div class="field">
+		    <%= f.text_area :content, placeholder: "Compose new micropost..." %>
+		  </div>
+		  <%= f.submit "Post", class: "btn btn-large btn-primary submitform" %>
+	
+      </section>
+    </aside>
+
+
+      <div class="span8">
+      <h3>Micropost Feed</h3>
+      <% if @feed_items.any? %>
+      <% @feed_items.each do |feed_item| %>
+  <ol class="microposts">
+    <li id="<%= feed_item.id %>">
+  <%= link_to gravatar_for(feed_item.user), feed_item.user %>
+  <span class="user">
+    <%= link_to feed_item.user.name, feed_item.user %>
+  </span>
+  <span class="content"><%= feed_item.content %></span>
+  <span class="timestamp">
+    Posted <%= time_ago_in_words(feed_item.created_at) %> ago.
+  </span>
+
+  <% if current_user?(feed_item.user) %>
+    <%= link_to "delete", feed_item, method: :delete,
+                                     data: { confirm: "You sure?" },
+                                     title: feed_item.content %>
+  <% end %>
+
+</li>
+  </ol>
+  <% end %>
+  <%= will_paginate @feed_items %>
+<% end %>
+    </div>
+  </div>
+
+
+  
+  
+  <% end %> 
+<% else %>
+
+
+  <div class="center hero-unit">
+    <h1>Welcome to the Sample App</h1>
+
+    <h2>
+      This is the home page for the
+      <a href="http://railstutorial.org/">Ruby on Rails Tutorial</a>
+      sample application.
+    </h2>
+
+    <%= link_to "Sign up now!", signup_path, 
+                                class: "btn btn-large btn-primary" %>
+  </div>
+
+  <%= link_to image_tag("rails.png", alt: "Rails"), 'http://rubyonrails.org/' %>
+<% end %> 
 
