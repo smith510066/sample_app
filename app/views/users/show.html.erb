@@ -7,35 +7,70 @@
         <%= @user.name %>
       </h1>
     </section>
-  </aside>
+  
+
+  <section>
+      <% @user ||= current_user %>
+<div class="stats">
+  <a href="<%= following_user_path(@user) %>">
+    <strong id="following" class="stat">
+      <%= @user.followed_users.count %>
+    </strong>
+    following
+  </a>
+  <a href="<%= followers_user_path(@user) %>">
+    <strong id="followers" class="stat">
+      <%= @user.followers.count %>
+    </strong>
+    followers
+  </a>
+</div>
+</section>
+
+</aside>
 
        <div class="span8">
       <h3>Micropost Feed</h3>
-      <% if @feed_items.any? %>
-      <p>Total posts: <%= @feed_items.count %></p>
-      <% @feed_items.each do |feed_item| %>
+
+<br />
+      <% unless current_user?(@user) %>
+  <div id="follow_form">
+  <% if current_user.following?(@user) %>
+   <%= render 'unfollow' %>
+  <% else %>
+   <%= render 'follow' %>
+  <% end %>
+  </div>
+<% end %>
+
+
+
+      <% if @user.microposts.any? %>
+      <p>Total posts: <%= @user.microposts.count %></p>
+      <% @user.microposts.each do |micropost| %>
   <ol class="microposts">
-    <li id="<%= feed_item.id %>">
-  <%= link_to gravatar_for(feed_item.user), feed_item.user %>
+    <li id="<%= micropost.id %>">
+  <%= link_to gravatar_for(@user), @user %>
+  
   <span class="user">
-    <%= link_to feed_item.user.name, feed_item.user %>
+    <%= link_to @user.name, @user %>
   </span>
-  <span class="content"><%= feed_item.content %></span>
+  <span class="content"><%= micropost.content %></span>
   <span class="timestamp">
-    Posted <%= time_ago_in_words(feed_item.created_at) %> ago.
+    Posted <%= time_ago_in_words(micropost.created_at) %> ago.
   </span>
 
- <% if current_user?(feed_item.user) %>
-    <%= link_to "delete", feed_item, method: :delete,
+ <% if current_user?(@user) %>
+    <%= link_to "delete", micropost, method: :delete,
                                      data: { confirm: "You sure?" },
-                                     title: feed_item.content %>
+                                     title: micropost.content %>
   <% end %>
 
   
 </li>
   </ol>
   <% end %>
-  <%= will_paginate @feed_items %>
+  
 <% end %>
     </div>
 </div>

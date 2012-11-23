@@ -1,7 +1,31 @@
 class UsersController < ApplicationController
-  before_filter :signed_in_user, only: [:index, :edit, :update, :show, :destroy]
+  before_filter :signed_in_user, only: [:index, :edit, :update, :show, :destroy, :following, :followers]
   before_filter :correct_user, only: [:edit, :update]
-  before_filter :admin_user, [:destroy]
+  before_filter :admin_user, only: [:destroy]
+
+  
+  def following
+  
+  @user = User.find(params[:id])
+  @username = User.find(params[:id]).name  
+  @title = "#{@username} is Following these people..."
+  @users = @user.followed_users
+  render 'show_follow'
+  end
+
+  def followers
+  
+  @user = User.find(params[:id])
+  @username = User.find(params[:id]).name
+  @title = "Following #{@username} are these people..."
+  @users = @user.followers
+  render 'show_follow'
+  end
+
+
+
+
+
 
   def index
     #@users = User.all
@@ -66,13 +90,13 @@ class UsersController < ApplicationController
     end
   end
 
-  def admin_user
-    if current_user.admin?
-      #nothing
-    else
-      redirect_to '/'
-  end
-end
+   def admin_user
+     if current_user.admin = true
+       #nothing
+     else
+       redirect_to '/'
+   end
+ end
 
 
 
